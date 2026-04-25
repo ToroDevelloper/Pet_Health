@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -19,26 +24,35 @@ export class UserService {
     return await bcrypt.hash(password, 10);
   }
 
-  private async comparePassword(password: string, hash: string): Promise<boolean> {
+  private async comparePassword(
+    password: string,
+    hash: string,
+  ): Promise<boolean> {
     return await bcrypt.compare(password, hash);
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { email, username, password, rolId } = createUserDto;
 
-    const existingEmail = await this.userRepository.findOne({ where: { email } });
+    const existingEmail = await this.userRepository.findOne({
+      where: { email },
+    });
     if (existingEmail) {
       throw new ConflictException('El email ya está registrado');
     }
 
-    const existingUsername = await this.userRepository.findOne({ where: { username } });
+    const existingUsername = await this.userRepository.findOne({
+      where: { username },
+    });
     if (existingUsername) {
       throw new ConflictException('El nombre de usuario ya está en uso');
     }
 
     const rol = await this.rolRepository.findOne({ where: { name: rolId } });
     if (!rol) {
-      throw new BadRequestException(`Rol ${rolId} no existe. Roles válidos: admin, veterinario, recepcionista, propietario`);
+      throw new BadRequestException(
+        `Rol ${rolId} no existe. Roles válidos: admin, veterinario, recepcionista, propietario`,
+      );
     }
 
     const hashedPassword = await this.hashPassword(password);
@@ -86,7 +100,9 @@ export class UserService {
       relations: ['rol'],
     });
     if (!user) {
-      throw new NotFoundException(`Usuario con username ${username} no encontrado`);
+      throw new NotFoundException(
+        `Usuario con username ${username} no encontrado`,
+      );
     }
     return user;
   }
@@ -95,21 +111,27 @@ export class UserService {
     const user = await this.findOne(id);
 
     if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const existingEmail = await this.userRepository.findOne({ where: { email: updateUserDto.email } });
+      const existingEmail = await this.userRepository.findOne({
+        where: { email: updateUserDto.email },
+      });
       if (existingEmail) {
         throw new ConflictException('El email ya está registrado');
       }
     }
 
     if (updateUserDto.username && updateUserDto.username !== user.username) {
-      const existingUsername = await this.userRepository.findOne({ where: { username: updateUserDto.username } });
+      const existingUsername = await this.userRepository.findOne({
+        where: { username: updateUserDto.username },
+      });
       if (existingUsername) {
         throw new ConflictException('El nombre de usuario ya está en uso');
       }
     }
 
     if (updateUserDto.rolId) {
-      const rol = await this.rolRepository.findOne({ where: { name: updateUserDto.rolId } });
+      const rol = await this.rolRepository.findOne({
+        where: { name: updateUserDto.rolId },
+      });
       if (!rol) {
         throw new BadRequestException(`Rol ${updateUserDto.rolId} no existe`);
       }
@@ -136,7 +158,10 @@ export class UserService {
     await this.userRepository.remove(user);
   }
 
-  async validateCredentials(username: string, password: string): Promise<User | null> {
+  async validateCredentials(
+    username: string,
+    password: string,
+  ): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { username },
       relations: ['rol'],

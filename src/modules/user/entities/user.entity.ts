@@ -43,7 +43,10 @@ export class User {
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @Column('timestamp', {
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
   updatedAt: Date;
 
   @ManyToOne(() => Rol, { eager: true })
