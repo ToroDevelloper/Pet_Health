@@ -1,5 +1,16 @@
-import { Controller, Get, Param, ParseUUIDPipe, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -17,14 +28,22 @@ export class VeterinarioController {
 
   @Get()
   @ApiOperation({ summary: 'Obtener todos los veterinarios' })
-  @ApiResponse({ status: 200, description: 'Veterinarios obtenidos exitosamente', type: [User] })
+  @ApiResponse({
+    status: 200,
+    description: 'Veterinarios obtenidos exitosamente',
+    type: [User],
+  })
   findAll(): Promise<User[]> {
     return this.userService.findByRol(RoleType.VETERINARIO);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un veterinario por ID' })
-  @ApiResponse({ status: 200, description: 'Veterinario obtenido exitosamente', type: User })
+  @ApiResponse({
+    status: 200,
+    description: 'Veterinario obtenido exitosamente',
+    type: User,
+  })
   @ApiResponse({ status: 404, description: 'Veterinario no encontrado' })
   findOne(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return this.userService.findOne(id);
